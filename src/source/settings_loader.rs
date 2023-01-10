@@ -19,13 +19,18 @@ pub struct SettingsLoader;
 /// the default [`StaticSoundSettings`].
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-struct SoundSettings {
+pub struct SoundSettings {
     /// Location of the sound file.
     file: PathBuf,
 
     /// The initial playback position of the sound (in seconds).
     #[serde(default)]
     pub start_position: f64,
+    /// The end playback position of the sound (in seconds).
+    ///
+    /// If None, play until the end of the sound
+    #[serde(default)]
+    pub end_position: Option<f64>,
     /// Amplitude multiplier
     ///
     /// If the channel you play the sound is configured, it will overwrite the volume here.
@@ -77,6 +82,7 @@ impl From<SoundSettings> for StaticSoundSettings {
         let mut static_sound_settings = StaticSoundSettings::new();
 
         static_sound_settings.start_position = settings.start_position;
+        static_sound_settings.end_position = settings.end_position;
         static_sound_settings.volume = Volume::from(settings.volume);
         static_sound_settings.playback_rate = PlaybackRate::from(settings.playback_rate);
         static_sound_settings.panning = settings.panning;
